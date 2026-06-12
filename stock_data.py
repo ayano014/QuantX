@@ -48,6 +48,8 @@ sharpe = (
 print(f"Sharpe: {sharpe:.2f}")
 print(f"Total Return: {total_return:.2f}%")
 
+#max drawdown calculation
+
 rolling_max = data["Portfolio"].cummax()
 
 drawdown = (data["Portfolio"] - rolling_max)/rolling_max
@@ -62,3 +64,22 @@ print(data[["Close",
             "Strategy_Returns",
             "Portfolio"
 ]].tail(10))
+
+import plotly.graph_objects as go
+
+fig = go.Figure()
+fig.add_trace(
+    go.Scatter(
+        x=data.index,
+        y=data["Portfolio"],
+        mode="lines",
+        name="Portfolio value"
+    )
+)
+
+fig.update_layout(
+    title="Quantx Equity Curve",
+    xaxis_title="Date",
+    yaxis_title="Portfolio Value ($)"
+)
+fig.show()
