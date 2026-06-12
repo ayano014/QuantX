@@ -65,6 +65,18 @@ print(data[["Close",
             "Portfolio"
 ]].tail(10))
 
+#spy benchmark data for comparison
+
+spy = yf.download("SPY", period="1y")
+
+spy["Returns"] = spy["Close"].pct_change()
+
+spy["Portfolio"] = (
+    1 + spy["Returns"]
+).cumprod() * initial_cash
+
+#graph plotted
+
 import plotly.graph_objects as go
 
 fig = go.Figure()
@@ -77,9 +89,23 @@ fig.add_trace(
     )
 )
 
+fig.add_trace(
+    go.Scatter(
+        x=spy.index,
+        y=spy["Portfolio"],
+        mode="lines",
+        name="SPY Buy & Hold"
+    )
+)
+
 fig.update_layout(
-    title="Quantx Equity Curve",
+    title=(
+    f"QuantX Dashboard | "
+    f"Return: {total_return:.2f}% | "
+    f"Sharpe: {sharpe:.2f} | "
+    f"Max DD: {max_drawdown:.2%}"),
     xaxis_title="Date",
     yaxis_title="Portfolio Value ($)"
 )
 fig.show()
+
