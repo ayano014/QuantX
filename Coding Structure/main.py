@@ -1,12 +1,23 @@
 from data_loader import load_data
-from Strategies.moving_average import generate_signal
+from Strategies import moving_average
+from Strategies import buy_and_hold
+from Strategies import mean_reversion
 from backtester import run_backtest
 from metrics import calculate_metrics
 from dashboard import show_dashboard
 
 data = load_data("AAPL")
 
-data = generate_signal(data)
+strategy_name = "mean_reversion"
+
+if strategy_name == "moving_average":
+    data = moving_average.generate_signal(data)
+
+elif strategy_name == "buy_and_hold":
+    data = buy_and_hold.generate_signal(data)
+
+elif strategy_name == "mean_reversion":
+    data = mean_reversion.generate_signal(data)
 
 data = run_backtest(data, initial_cash=10000)
 
