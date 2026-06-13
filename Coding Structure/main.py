@@ -2,7 +2,7 @@ from data_loader import load_data
 from Strategies.moving_average import generate_signal
 from backtester import run_backtest
 from metrics import calculate_metrics
-
+from dashboard import show_dashboard
 
 data = load_data("AAPL")
 
@@ -27,3 +27,5 @@ print(
         ]
     ].tail()
 )
+
+show_dashboard(data, 10000)
