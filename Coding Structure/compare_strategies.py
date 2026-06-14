@@ -5,6 +5,7 @@ from Strategies import mean_reversion
 from data_loader import load_data
 from backtester import run_backtest
 from metrics import calculate_metrics
+from dashboard_compare import show_strategy_comparison
 
 def compare_strategies():
 
@@ -71,5 +72,13 @@ def compare_strategies():
 
     print("\n")
     print(results_df)
+    show_strategy_comparison(results_df)
+    
+    winner = results_df.iloc[0]
 
+    print("\nBEST STRATEGY")
+    print(f"Strategy: {winner['Strategy']}")
+    print(f"Return: {winner['Return']:.2f}%")
+    print(f"Sharpe: {winner['Sharpe']:.2f}")
+    print(f"Drawdown: {winner['Drawdown']:.2%}")
 compare_strategies()
