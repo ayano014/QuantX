@@ -6,37 +6,39 @@ from backtester import run_backtest
 from metrics import calculate_metrics
 from dashboard import show_dashboard
 
+strategies = {
+    "moving_average": moving_average,
+    "buy_and_hold": buy_and_hold,
+    "mean_reversion": mean_reversion
+}
+
 data = load_data("AAPL")
 
 strategy_name = "moving_average"
 
-if strategy_name == "moving_average":
-    data = moving_average.generate_signal(data)
+strategy = strategies[strategy_name]
 
-elif strategy_name == "buy_and_hold":
-    data = buy_and_hold.generate_signal(data)
+data = strategy.generate_signal(data)
 
-elif strategy_name == "mean_reversion":
-    data = mean_reversion.generate_signal(data)
-
-data = run_backtest(data, initial_cash=10000)
-
-total_return, sharpe, max_drawdown = (
-    calculate_metrics(data,10000)
+data = run_backtest(
+    data,
+    initial_cash=10000
 )
+
+(
+    total_return,
+    sharpe,
+    max_drawdown,
+    cagr,
+    volatility,
+    win_rate
+) = calculate_metrics(data, 10000)
 
 print(f"Return: {total_return:.2f}%")
 print(f"Sharpe: {sharpe:.2f}")
 print(f"Max Drawdown: {max_drawdown:.2%}")
-
-print(
-    data[
-        [
-            "Close",
-            "Signal",
-            "Portfolio"
-        ]
-    ].tail()
-)
+print(f"CAGR: {cagr:.2f}%")
+print(f"Volatility: {volatility:.2f}%")
+print(f"Win Rate: {win_rate:.2f}%")
 
 show_dashboard(data, 10000)
