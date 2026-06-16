@@ -8,7 +8,7 @@ from dashboard import show_dashboard
 
 data = load_data("AAPL")
 
-strategy_name = "mean_reversion"
+strategy_name = "moving_average"
 
 if strategy_name == "moving_average":
     data = moving_average.generate_signal(data)
