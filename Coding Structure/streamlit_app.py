@@ -1,5 +1,6 @@
 import streamlit as st
 import plotly.graph_objects as go
+import pandas as pd
 
 from comparison_page import run_comparison
 from data_loader import load_data
@@ -168,6 +169,26 @@ if page == "Single Strategy":
             fig,
             use_container_width=True
         )
+        results_df = pd.DataFrame({
+            "Strategy": [strategy],
+            "Return": [total_return],
+            "Sharpe": [sharpe],
+            "Drawdown": [max_drawdown],
+            "CAGR": [cagr],
+            "Volatility": [volatility],
+            "Win Rate": [win_rate]
+        })
+        
+        csv = results_df.to_csv(
+            index=False
+        ).encode("utf-8")
+
+        st.download_button(
+            label="⬇ Download Results CSV",
+            data=csv,
+            file_name=f"{strategy}_results.csv",
+            mime="text/csv"
+        )
 
 # ==========================
 # STRATEGY COMPARISON PAGE
@@ -175,9 +196,7 @@ if page == "Single Strategy":
 
 elif page == "Strategy Comparison":
 
-    st.title(
-        "Strategy Comparison"
-    )
+    st.title("📊 Strategy Comparison")
 
     results_df = run_comparison()
 
@@ -186,14 +205,18 @@ elif page == "Strategy Comparison":
         ascending=False
     ).iloc[0]
 
+    st.subheader("🏆 Performance Summary")
+    
     st.success(
-        f"🏆 Best Strategy: {winner['Strategy']} | "
-        f"Return: {winner['Return']:.2f}%"
+        f"🏆 Best Strategy: {winner['Strategy']} "
+        f"| Return: {winner['Return']:.2f}%"
     )
+
     st.dataframe(
         results_df,
         use_container_width=True
     )
+
     import plotly.express as px
 
     fig = px.bar(
@@ -206,6 +229,50 @@ elif page == "Strategy Comparison":
 
     fig.update_traces(
         texttemplate="%{text:.2f}",
+        textposition="outside"
+    )
+
+    st.plotly_chart(
+        fig,
+        use_container_width=True
+    )
+
+    st.subheader(
+        "Sharpe Ratio Comparison"
+    )
+
+    fig = px.bar(
+        results_df,
+        x="Strategy",
+        y="Sharpe",
+        text="Sharpe",
+        title="Sharpe Ratio"
+    )
+
+    fig.update_traces(
+        texttemplate="%{text:.2f}",
+        textposition="outside"
+    )
+
+    st.plotly_chart(
+        fig,
+        use_container_width=True
+    )
+
+    st.subheader(
+    "Drawdown Comparison"
+    )
+
+    fig = px.bar(
+        results_df,
+        x="Strategy",
+        y="Drawdown",
+        text="Drawdown",
+        title="Maximum Drawdown"
+    )
+
+    fig.update_traces(
+        texttemplate="%{text:.2%}",
         textposition="outside"
     )
 
